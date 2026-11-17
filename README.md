@@ -33,9 +33,45 @@ This repository includes a working Streamlit-based prototype of the dashboard. I
 * `src/eda_dashboard/core.py` — loading, profiling, and cleaning logic
 * `src/eda_dashboard/insights.py` — heuristic-based anomaly recommendations
 * `Dockerfile` — containerized deployment
-* `.github/workflows/ci.yml` — basic CI validation
+* `.github/workflows/ci.yml` — CI validation and Cloud Run deployment
 
 ## Future Enhancements
 * Add FastAPI backend endpoints for batch inference and deployment
 * Integrate a real LLM API for natural-language explanations
-* Publish the app to GCP using a CI/CD deployment pipeline
+
+## Deploy to Google Cloud Run
+
+The GitHub Actions workflow runs the CI checks on pushes and pull requests. After
+the checks pass on `main` or `master`, it builds the Docker image, pushes it to
+Artifact Registry, and deploys it to Cloud Run. The service is publicly
+accessible.
+
+Before deploying:
+
+1. Enable the Cloud Run (`run.googleapis.com`), Artifact Registry
+   (`artifactregistry.googleapis.com`), IAM Credentials
+   (`iamcredentials.googleapis.com`), and Security Token Service
+   (`sts.googleapis.com`) APIs in your Google Cloud project.
+2. Create an Artifact Registry Docker repository in your deployment region.
+3. Configure Workload Identity Federation for GitHub Actions. Restrict the
+   provider condition to this GitHub repository and the `main`/`master` branch
+   refs. Grant its GitHub repository principal
+   `roles/iam.workloadIdentityUser` on the deployment service account.
+4. Grant the deployment service account `roles/artifactregistry.writer`,
+   `roles/run.admin`, and `roles/iam.serviceAccountUser` for the Cloud Run runtime
+   service account.
+5. Add these repository-level Actions variables in GitHub (**Settings >
+   Secrets and variables > Actions > Variables**):
+
+   | Variable | Value |
+   | --- | --- |
+   | `GCP_PROJECT_ID` | Google Cloud project ID |
+   | `GCP_REGION` | Region containing the Artifact Registry repository and Cloud Run service |
+   | `GCP_ARTIFACT_REGISTRY_REPOSITORY` | Artifact Registry Docker repository name |
+   | `GCP_CLOUD_RUN_SERVICE` | Cloud Run service name |
+   | `GCP_WORKLOAD_IDENTITY_PROVIDER` | Full Workload Identity Provider resource name |
+   | `GCP_SERVICE_ACCOUNT` | Deployment service account email |
+
+No long-lived Google Cloud key is needed. Push to `main` or `master` to trigger
+deployment after CI succeeds. The workflow configures Cloud Run to listen on
+port `8501`, matching the containerized Streamlit app.
