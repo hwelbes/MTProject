@@ -46,7 +46,18 @@ the checks pass on `main` or `master`, it builds the Docker image, pushes it to
 Artifact Registry, and deploys it to Cloud Run. The service is publicly
 accessible.
 
-
+1. Enable the Cloud Run (`run.googleapis.com`), Artifact Registry
+   (`artifactregistry.googleapis.com`), IAM Credentials
+   (`iamcredentials.googleapis.com`), and Security Token Service
+   (`sts.googleapis.com`) APIs in your Google Cloud project.
+2. Create an Artifact Registry Docker repository in your deployment region.
+3. Configure Workload Identity Federation for GitHub Actions. Restrict the
+   provider condition to this GitHub repository and the `main`/`master` branch
+   refs. Grant its GitHub repository principal
+   `roles/iam.workloadIdentityUser` on the deployment service account.
+4. Grant the deployment service account `roles/artifactregistry.writer`,
+   `roles/run.admin`, and `roles/iam.serviceAccountUser` for the Cloud Run runtime
+   service account.
 5. Add these repository-level Actions variables in GitHub (**Settings >
    Secrets and variables > Actions > Variables**):
 
