@@ -18,7 +18,7 @@ An automated web dashboard designed to eliminate the time bottleneck of data pre
 * **Cloud Deployment:** Google Cloud Platform (GCP)
 
 ## Current MVP Status
-This repository includes a working Streamlit-based prototype of the dashboard. It supports file upload, automated quality scoring, missing-value treatment, duplicate removal, and downloadable cleaned exports. Cloud Troubleshooting in Progress.
+This repository includes a working Streamlit-based prototype of the dashboard. It supports file upload, automated quality scoring, missing-value treatment, duplicate removal, and downloadable cleaned exports. Code generation was assisted by GitHub Copilot. Cloud Deployment website is functional.
 
 ## Local Development
 1. Create and activate a virtual environment.
