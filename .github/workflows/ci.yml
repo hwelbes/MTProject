@@ -25,6 +25,7 @@ jobs:
       - name: Validate the application imports
         run: |
           python -m compileall app.py src
+          pytest -q
 
   deploy:
     name: Deploy to Cloud Run

@@ -6,7 +6,7 @@ import pandas as pd
 import streamlit as st
 
 from src.eda_dashboard.core import assess_dataframe, clean_dataframe, load_dataset
-from src.eda_dashboard.insights import generate_ai_insights
+from src.eda_dashboard.insights import generate_ai_insights, get_llm_configuration
 
 st.set_page_config(page_title="EDA & Cleaning Dashboard", layout="wide")
 st.title("Automated Exploratory Data Analysis & Cleaning Dashboard")
@@ -16,6 +16,7 @@ with st.sidebar:
     st.header("Dataset Controls")
     remove_duplicates = st.checkbox("Remove duplicate rows", value=True)
     fill_missing = st.checkbox("Fill missing values automatically", value=True)
+    use_llm = st.checkbox("Use LLM for explanations", value=True)
     st.markdown("---")
     st.caption("Built for junior analysts, BI students, and research teams.")
 
@@ -100,7 +101,16 @@ if uploaded_file is not None:
 
     with insights_tab:
         st.subheader("AI-Powered Recommendations")
-        insights = generate_ai_insights(df, assessment)
+        llm_config = get_llm_configuration()
+        if use_llm and llm_config["api_key_configured"]:
+            st.caption(f"LLM: {llm_config['model']}")
+        elif use_llm:
+            st.warning(
+                "LLM API is not configured. Set OPENAI_API_KEY and optionally "
+                "OPENAI_MODEL or OPENAI_BASE_URL. Showing local recommendations instead."
+            )
+
+        insights = generate_ai_insights(df, assessment, use_llm=use_llm)
         for insight in insights:
             st.markdown(f"- {insight}")
 

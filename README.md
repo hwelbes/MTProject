@@ -24,9 +24,16 @@ This repository includes a working Streamlit-based prototype of the dashboard. I
 1. Create and activate a virtual environment.
 2. Install dependencies:
    `pip install -r requirements.txt`
-3. Start the app:
+3. Optionally configure an OpenAI-compatible API:
+   - Set `OPENAI_API_KEY` to your API key.
+   - Set `OPENAI_MODEL` to override the default `gpt-4o-mini`.
+   - Set `OPENAI_BASE_URL` for an OpenAI-compatible endpoint.
+4. Start the app:
    `streamlit run app.py`
-4. Open the local URL shown in the terminal.
+5. Open the local URL shown in the terminal.
+
+Natural-language insights use the configured API. If no API key is available or
+a request fails, the dashboard displays its built-in heuristic recommendations.
 
 ## Project Structure
 * `app.py` — dashboard UI and workflow
@@ -37,7 +44,6 @@ This repository includes a working Streamlit-based prototype of the dashboard. I
 
 ## Future Enhancements
 * Add FastAPI backend endpoints for batch inference and deployment
-* Integrate a real LLM API for natural-language explanations
 
 ## Deploy to Google Cloud Run
 
